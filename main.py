@@ -34,8 +34,12 @@ class VentanaPrincipal(QMainWindow):
         ruta_normalizada = os.path.normpath(ruta_absoluta)
         self.imgpixmap_original = QPixmap(ruta_normalizada)
         self.ajustar_img2label(self.imgpixmap_original, self.label_img_original, 0, 0)
+        self.mostrar_datos_label(self.label_img_original_datos, self.imgpixmap_original.width(), self.imgpixmap_original.height())
         self.img_cargada = True
     
+    def mostrar_datos_label(self, label, ancho, alto):
+        label.setText(f'Ancho: {ancho}px ~ Alto: {alto}px')
+
     def ajustar_img2label(self, imgpixmap, label, margeny, margenx):
         if imgpixmap.height() > imgpixmap.width():
             imgpixmap = imgpixmap.scaledToHeight(label.height()-margeny)
