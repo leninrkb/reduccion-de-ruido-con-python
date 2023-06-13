@@ -171,7 +171,7 @@ class VentanaPrincipal(QMainWindow):
         if x < y:
             x = y
         if radio*2 > x:
-            x = int(x/2)
+            x = x//2
             objeto.setValue(x)
             return x
         return radio
