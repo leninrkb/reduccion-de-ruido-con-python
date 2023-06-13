@@ -6,6 +6,7 @@ from matplotlib.animation import ImageMagickWriter
 import numpy as np
 import time
 import os
+from PIL import Image
 from scipy.ndimage import median_filter
 
 
@@ -21,6 +22,7 @@ class VentanaPrincipal(QMainWindow):
         # 
         self.img_original_activa = False
         # 
+        self.radioButton_espacio.toggled.connect(self.cambio_suavizado)
         # 
         self.img_cargada = False
         self.img_ruido_cargada = False
@@ -38,6 +40,13 @@ class VentanaPrincipal(QMainWindow):
         if self.img_manual_cargada:
             self.ajustar_img2label(self.pixmap_manual_resultado, self.label_manual_img)
 
+    def cambio_suavizado(self):
+        if self.radioButton_espacio.isChecked():
+            self.frame_opciones_frecuencia.setEnabled(False)
+            self.frame_opciones_espacio.setEnabled(True)
+        elif self.radioButton_frecuencia.isChecked():
+            self.frame_opciones_frecuencia.setEnabled(True)
+            self.frame_opciones_espacio.setEnabled(False)
 
     def seleccionar_img(self):
         archivo = QFileDialog()
@@ -63,6 +72,7 @@ class VentanaPrincipal(QMainWindow):
         # 
         self.img_cargada = True
         self.pushButton_aplicar_ruido.setEnabled(True)
+        self.pushButton_aplicar_filtro.setEnabled(True)
 
     def mostrar_datos_label(self, label=None, pixmap=None, procesando=False, mns=None):
         if not procesando:
@@ -87,6 +97,7 @@ class VentanaPrincipal(QMainWindow):
         self.img_ruido_cargada = True
         self.img_original_activa = False
         self.cambio_img_trabajo()
+        self.pushButton_descargar_img_ruido.setEnabled(True)
 
     def mostrar_img_ruido(self):
         self.pixmap_ruido = self.imgcv2pixmap(self.img_ruido)
@@ -122,9 +133,9 @@ class VentanaPrincipal(QMainWindow):
             ancho = self.spinBox_filtro_x.value()
             alto = self.spinBox_filtro_y.value()
             r, g, b = cv2.split(self.img_trabajo)
-            r = self.manual_filtro_media(r, ancho, alto)
-            g = self.manual_filtro_media(g, ancho, alto)
-            b = self.manual_filtro_media(b, ancho, alto)
+            r = self.manual_filtro_media2(r, ancho, alto)
+            g = self.manual_filtro_media2(g, ancho, alto)
+            b = self.manual_filtro_media2(b, ancho, alto)
         elif self.radioButton_frecuencia.isChecked():
             radio = self.spinBox_filtro_frecuencia.value()
             radio = self.verificar_radio(radio,self.img_trabajo,self.spinBox_filtro_frecuencia)
@@ -168,10 +179,8 @@ class VentanaPrincipal(QMainWindow):
             for j in range(0,y):
                 if i+ancho > x or j+alto > y:
                     i_excede = abs(i+ancho-x)
-                    # i_falta = ancho - i_excede
                     j_excede = abs(j+alto-y)
-                    # j_falta = alto - j_excede
-                    filtro = canal[i:i+i_excede , j:j+j_excede]
+                    filtro = canal[i-i_excede:i , j-j_excede:j]
                 else:
                     filtro = canal[i:i+ancho , j:j+alto]
                 media = np.median(filtro)
@@ -181,11 +190,29 @@ class VentanaPrincipal(QMainWindow):
         nuevo = nuevo.astype(np.uint8)
         return nuevo
     
-    def manual_filtro_altos(self, canal, radio):
-        return self.python_filtro_altos(canal, radio)
+    def manual_filtro_altos(self, img, radio):
+        fourier = np.fft.fft2(img)
+        fdesplazado = np.fft.fftshift(fourier)
+        filas, columnas = img.shape
+        centro_filas, centro_columnas = filas // 2, columnas // 2
+        mascara = np.zeros((filas, columnas), np.uint8)
+        mascara[centro_filas - radio:centro_filas + radio, centro_columnas - radio:centro_columnas + radio] = 1
+        filtrado = fdesplazado * mascara
+        inversa_desplazado = np.fft.ifftshift(filtrado)
+        img = np.abs(np.fft.ifft2(inversa_desplazado))
+        return img.astype(np.uint8)
     
-    def manual_filtro_bajos(self, canal, radio):
-        return self.python_filtro_bajos(canal, radio)
+    def manual_filtro_bajos(self, img, radio):
+        fourier = np.fft.fft2(img)
+        fdesplazado = np.fft.fftshift(fourier)
+        filas, columnas = img.shape
+        centro_filas, centro_columnas = filas // 2, columnas // 2
+        mascara = np.ones((filas, columnas), np.uint8)
+        mascara[centro_filas - radio:centro_filas + radio, centro_columnas - radio:centro_columnas + radio] = 0
+        filtrado = fdesplazado * mascara
+        inversa_desplazado = np.fft.ifftshift(filtrado)
+        img = np.abs(np.fft.ifft2(inversa_desplazado))
+        return img.astype(np.uint8)
     
     def aplicar_python(self):
         self.img_python_cargada = False
@@ -216,29 +243,21 @@ class VentanaPrincipal(QMainWindow):
         self.img_python_cargada = True
         self.pushButton_descargar_resultado.setEnabled(True)
 
-    def python_filtro_altos(self, img, radio):
-        fourier = np.fft.fft2(img)
-        fdesplazado = np.fft.fftshift(fourier)
-        filas, columnas = img.shape
-        centro_filas, centro_columnas = filas // 2, columnas // 2
-        mascara = np.zeros((filas, columnas), np.uint8)
-        mascara[centro_filas - radio:centro_filas + radio, centro_columnas - radio:centro_columnas + radio] = 1
-        filtrado = fdesplazado * mascara
-        inversa_desplazado = np.fft.ifftshift(filtrado)
-        img = np.abs(np.fft.ifft2(inversa_desplazado))
-        return img.astype(np.uint8)
-    
     def python_filtro_bajos(self, img, radio):
-        fourier = np.fft.fft2(img)
-        fdesplazado = np.fft.fftshift(fourier)
-        filas, columnas = img.shape
-        centro_filas, centro_columnas = filas // 2, columnas // 2
-        mascara = np.ones((filas, columnas), np.uint8)
-        mascara[centro_filas - radio:centro_filas + radio, centro_columnas - radio:centro_columnas + radio] = 0
-        filtrado = fdesplazado * mascara
-        inversa_desplazado = np.fft.ifftshift(filtrado)
-        img = np.abs(np.fft.ifft2(inversa_desplazado))
-        return img.astype(np.uint8)
+        kernel = np.ones((radio, radio), np.float32) / 25.0
+        img = cv2.filter2D(img, -1, kernel)
+        img = np.array(img)
+        img = img.astype(np.uint8)
+        return img
+    
+    def python_filtro_altos(self, img, radio):
+        kernel = np.zeros((radio, radio), np.float32)
+        kernel[int((radio-1)/2), int((radio-1)/2)] = 2.0
+        kernel = kernel - np.ones((radio, radio), np.float32) / (radio**2)
+        img = cv2.filter2D(img, -1, kernel)
+        img = np.array(img)
+        img = img.astype(np.uint8)
+        return img
     
     def verificar_radio(self, radio, img, objeto):
         x, y, _ = img.shape

@@ -38,7 +38,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,4">
        <item>
         <widget class="QFrame" name="frame_2">
          <property name="frameShape">
@@ -156,6 +156,9 @@
              </item>
              <item row="2" column="0" colspan="2">
               <widget class="QPushButton" name="pushButton_aplicar_ruido">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Aplicar ruido</string>
                </property>
@@ -204,6 +207,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_descargar_img_ruido">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Descargar</string>
                </property>
@@ -246,19 +252,19 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QRadioButton" name="radioButton_manual">
-                  <property name="text">
-                   <string>Manual</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <widget class="QRadioButton" name="radioButton_python">
                   <property name="text">
                    <string>Python</string>
                   </property>
                   <property name="checked">
                    <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="radioButton_manual">
+                  <property name="text">
+                   <string>Manual</string>
                   </property>
                  </widget>
                 </item>
@@ -310,7 +316,10 @@
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame_12">
+              <widget class="QFrame" name="frame_opciones_espacio">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
@@ -363,7 +372,10 @@
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame_13">
+              <widget class="QFrame" name="frame_opciones_frecuencia">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
@@ -498,6 +510,9 @@
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
               <widget class="QPushButton" name="pushButton_aplicar_filtro">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Aplicar filtro</string>
                </property>
@@ -505,6 +520,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="pushButton_descargar_resultado">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Descargar</string>
                </property>
