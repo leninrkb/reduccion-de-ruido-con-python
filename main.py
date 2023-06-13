@@ -50,7 +50,7 @@ class VentanaPrincipal(QMainWindow):
         # 
         self.pixmap_original = QPixmap(ruta_normalizada)
         self.ajustar_img2label(self.pixmap_original, self.label_img_original)
-        self.mostrar_datos_label(self.label_img_original_datos, self.pixmap_original)
+        self.mostrar_datos_label(self.label_img_original_datos, self.pixmap_original, mns='')
         # 
         self.img_original = cv2.imread(ruta_normalizada)
         self.img_original = cv2.cvtColor(self.img_original, cv2.COLOR_BGR2RGB)
@@ -62,7 +62,7 @@ class VentanaPrincipal(QMainWindow):
 
     def mostrar_datos_label(self, label=None, pixmap=None, procesando=False, mns=None):
         if not procesando:
-            label.setText(f"Ancho: {pixmap.width()}px ~ Alto: {pixmap.height()}px")
+            label.setText(f"{mns} Ancho: {pixmap.width()}px ~ Alto: {pixmap.height()}px")
         elif not mns == None:
             label.setText(mns)
         else:
@@ -87,7 +87,7 @@ class VentanaPrincipal(QMainWindow):
     def mostrar_img_ruido(self):
         self.pixmap_ruido = self.imgcv2pixmap(self.img_ruido)
         self.ajustar_img2label(self.pixmap_ruido, self.label_img_ruido)
-        self.mostrar_datos_label(self.label_datos_img_ruido, self.pixmap_ruido)
+        self.mostrar_datos_label(self.label_datos_img_ruido, self.pixmap_ruido, mns='ruido')
 
     def imgcv2pixmap(self, img):
         altoimg, anchoimg, channels = img.shape
@@ -139,7 +139,7 @@ class VentanaPrincipal(QMainWindow):
         self.img_python_resultado = cv2.merge([r, g, b])
         self.pixmap_python_resultado = self.imgcv2pixmap(self.img_python_resultado)
         self.ajustar_img2label(self.pixmap_python_resultado, self.label_python_img)
-        self.mostrar_datos_label(self.label_python_datos_img, self.pixmap_python_resultado)
+        self.mostrar_datos_label(self.label_python_datos_img, self.pixmap_python_resultado, mns='Python')
         self.img_python_cargada = True
         self.pushButton_descargar_resultado.setEnabled(True)
 
