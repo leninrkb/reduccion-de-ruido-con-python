@@ -18,9 +18,16 @@ class VentanaPrincipal(QMainWindow):
         self.pushButton_python_aplicar.clicked.connect(self.aplicar_python)
         self.pushButton_python_descargar.clicked.connect(self.descargar_python)
         self.pushButton_descargar_img_ruido.clicked.connect(self.descargar_ruido)
+        # 
         self.radioButton_img_original.setChecked(False)
         self.radioButton_python_altos.setChecked(True)
         self.radioButton_img_ruido.setChecked(False)
+        # 
+        self.pushButton_python_aplicar.setEnabled(False)
+        self.pushButton_python_descargar.setEnabled(False)
+        self.pushButton_descargar_img_ruido.setEnabled(False)
+        self.pushButton_aplicar_ruido.setEnabled(False)
+        # 
         self.img_cargada = False
         self.img_ruido_cargada = False
         self.img_python_cargada = False
@@ -46,14 +53,19 @@ class VentanaPrincipal(QMainWindow):
     def mostrar_img(self, ruta):
         ruta_absoluta = os.path.abspath(ruta)
         ruta_normalizada = os.path.normpath(ruta_absoluta)
+        # 
         self.pixmap_original = QPixmap(ruta_normalizada)
         self.ajustar_img2label(self.pixmap_original, self.label_img_original)
         self.mostrar_datos_label(self.label_img_original_datos, self.pixmap_original)
-        self.img_cargada = True
-        self.radioButton_img_original.setChecked(True)
+        # 
         self.img_original = cv2.imread(ruta_normalizada)
         self.img_original = cv2.cvtColor(self.img_original, cv2.COLOR_BGR2RGB)
         self.img_trabajo = self.img_original
+        # 
+        self.img_cargada = True
+        self.radioButton_img_original.setChecked(True)
+        self.pushButton_aplicar_ruido.setEnabled(True)
+        self.pushButton_python_aplicar.setEnabled(True)
 
     def mostrar_datos_label(self, label=None, pixmap=None, procesando=False, mns=None):
         if not procesando:
@@ -120,6 +132,7 @@ class VentanaPrincipal(QMainWindow):
             self.ajustar_img2label(self.pixmap_python_resultado, self.label_python_img)
             self.mostrar_datos_label(self.label_python_datos_img, self.pixmap_python_resultado)
             self.img_python_cargada = True
+            self.pushButton_python_descargar.setEnabled(True)
         elif self.radioButton_python_frecuencia.isChecked():
             if self.radioButton_python_altos.isChecked():
                 radio = self.spinBox_python_frecuencia_radio.value()
@@ -175,7 +188,9 @@ class VentanaPrincipal(QMainWindow):
             self.img_python_resultado,
             "python_espacio"
             if self.radioButton_python_espacio.isChecked()
-            else "python_frecuencia",
+            else "python_frecuencia_altos" 
+                if self.radioButton_python_altos.isChecked()
+                else "python_frecuencia_bajos",
         )
 
     def descargar_ruido(self):
