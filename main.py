@@ -25,6 +25,7 @@ class VentanaPrincipal(QMainWindow):
         self.img_cargada = False
         self.img_ruido_cargada = False
         self.img_python_cargada = False
+        self.img_manual_cargada = False
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
@@ -34,6 +35,9 @@ class VentanaPrincipal(QMainWindow):
             self.ajustar_img2label(self.pixmap_ruido, self.label_img_ruido)
         if self.img_python_cargada:
             self.ajustar_img2label(self.pixmap_python_resultado, self.label_python_img)
+        if self.img_manual_cargada:
+            self.ajustar_img2label(self.pixmap_manual_resultado, self.label_manual_img)
+
 
     def seleccionar_img(self):
         archivo = QFileDialog()
@@ -112,8 +116,82 @@ class VentanaPrincipal(QMainWindow):
             self.aplicar_python()
         
     def aplicar_manual(self):
-        print()
+        self.img_manual_cargada = False
+        self.mostrar_datos_label(label=self.label_manual_datos_img, procesando=True)
+        if self.radioButton_espacio.isChecked():
+            ancho = self.spinBox_filtro_x.value()
+            alto = self.spinBox_filtro_y.value()
+            r, g, b = cv2.split(self.img_trabajo)
+            r = self.manual_filtro_media2(r, ancho, alto)
+            g = self.manual_filtro_media2(g, ancho, alto)
+            b = self.manual_filtro_media2(b, ancho, alto)
+        elif self.radioButton_frecuencia.isChecked():
+            radio = self.spinBox_filtro_frecuencia.value()
+            radio = self.verificar_radio(radio,self.img_trabajo,self.spinBox_filtro_frecuencia)
+            r, g, b = cv2.split(self.img_trabajo)
+            if self.radioButton_altos.isChecked():
+                r = self.manual_filtro_altos(r, radio)
+                g = self.manual_filtro_altos(g, radio)
+                b = self.manual_filtro_altos(b, radio)
+            elif self.radioButton_bajos.isChecked():
+                r = self.manual_filtro_bajos(r, radio)
+                g = self.manual_filtro_bajos(g, radio)
+                b = self.manual_filtro_bajos(b, radio)
+        self.img_manual_resultado = cv2.merge([r, g, b])
+        self.pixmap_manual_resultado = self.imgcv2pixmap(self.img_manual_resultado)
+        self.ajustar_img2label(self.pixmap_manual_resultado, self.label_manual_img)
+        self.mostrar_datos_label(self.label_manual_datos_img, self.pixmap_manual_resultado, mns='Manual')
+        self.img_manual_cargada = True
+        self.pushButton_descargar_resultado.setEnabled(True)
 
+    def manual_filtro_media2(self, canal, ancho, alto):
+        nuevo = []
+        x, y = canal.shape
+        for i in range(0,x):
+            columna = []
+            for j in range(0,y):
+                if i+ancho > x or j+alto > y:
+                    i_excede = abs(i+ancho-x)
+                    i_falta = ancho - i_excede
+                    j_excede = abs(j+alto-y)
+                    j_falta = alto - j_excede
+                    filtro = canal[i-i_excede:i+i_falta , j-j_excede:j+j_falta]
+                else:
+                    filtro = canal[i:i+ancho , j:j+alto]
+                media = np.median(filtro)
+                columna.append(media)
+            nuevo.append(columna)
+        nuevo = np.array(nuevo)
+        nuevo = nuevo.astype(np.uint8)
+        return nuevo
+    
+    def manual_filtro_media(self, canal, ancho, alto):
+        nuevo = []
+        x, y = canal.shape
+        for i in range(0,x):
+            columna = []
+            for j in range(0,y):
+                if i+ancho > x or j+alto > y:
+                    i_excede = abs(i+ancho-x)
+                    i_falta = ancho - i_excede
+                    j_excede = abs(j+alto-y)
+                    j_falta = alto - j_excede
+                    filtro = canal[i-i_excede:i+i_falta , j-j_excede:j+j_falta]
+                else:
+                    filtro = canal[i:i+ancho , j:j+alto]
+                media = np.median(filtro)
+                columna.append(media)
+            nuevo.append(columna)
+        nuevo = np.array(nuevo)
+        nuevo = nuevo.astype(np.uint8)
+        return nuevo
+    
+    def manual_filtro_altos(self, canal, radio):
+        return self.python_filtro_altos(canal, radio)
+    
+    def manual_filtro_bajos(self, canal, radio):
+        return self.python_filtro_bajos(canal, radio)
+    
     def aplicar_python(self):
         self.img_python_cargada = False
         self.mostrar_datos_label(label=self.label_python_datos_img, procesando=True)
@@ -188,7 +266,14 @@ class VentanaPrincipal(QMainWindow):
 
     def descargar_resultado(self):
         if self.radioButton_manual.isChecked():
-            print()
+            self.descargar_img(
+                self.img_manual_resultado,
+                "manual_espacio"
+                if self.radioButton_espacio.isChecked()
+                else "manual_frecuencia_altos" 
+                    if self.radioButton_altos.isChecked()
+                    else "manual_frecuencia_bajos",
+            )
         elif self.radioButton_python.isChecked():
             self.descargar_img(
                 self.img_python_resultado,
