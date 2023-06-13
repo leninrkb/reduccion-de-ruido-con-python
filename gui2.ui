@@ -38,7 +38,7 @@
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,2">
+      <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
        <item>
         <widget class="QFrame" name="frame_2">
          <property name="frameShape">
@@ -89,7 +89,7 @@
              <item>
               <widget class="QPushButton" name="pushButton_cargar_img">
                <property name="text">
-                <string>Descgargar</string>
+                <string>Cargar</string>
                </property>
               </widget>
              </item>
@@ -257,6 +257,9 @@
                   <property name="text">
                    <string>Python</string>
                   </property>
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
                  </widget>
                 </item>
                </layout>
@@ -290,6 +293,9 @@
                  <widget class="QRadioButton" name="radioButton_espacio">
                   <property name="text">
                    <string>Espacio</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
@@ -369,6 +375,9 @@
                  <widget class="QRadioButton" name="radioButton_altos">
                   <property name="text">
                    <string>Altos</string>
+                  </property>
+                  <property name="checked">
+                   <bool>true</bool>
                   </property>
                  </widget>
                 </item>
