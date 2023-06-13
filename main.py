@@ -19,6 +19,7 @@ class VentanaPrincipal(QMainWindow):
         self.pushButton_python_descargar.clicked.connect(self.descargar_python)
         self.pushButton_descargar_img_ruido.clicked.connect(self.descargar_ruido)
         self.radioButton_img_original.setChecked(False)
+        self.radioButton_python_altos.setChecked(True)
         self.radioButton_img_ruido.setChecked(False)
         self.img_cargada = False
         self.img_ruido_cargada = False
@@ -124,19 +125,20 @@ class VentanaPrincipal(QMainWindow):
                 radio = self.spinBox_python_frecuencia_radio.value()
                 radio = self.verificar_radio(radio,self.img_trabajo,self.spinBox_python_frecuencia_radio)
                 r, g, b = cv2.split(self.img_trabajo)
-                r = self.python_filtro_altos(r, radio)
-                g = self.python_filtro_altos(g, radio)
-                b = self.python_filtro_altos(b, radio)
+                if self.radioButton_python_altos.isChecked():
+                    r = self.python_filtro_altos(r, radio)
+                    g = self.python_filtro_altos(g, radio)
+                    b = self.python_filtro_altos(b, radio)
+                elif self.radioButton_python_altos.isChecked():
+                    r = self.python_filtro_altos(r, radio)
+                    g = self.python_filtro_altos(g, radio)
+                    b = self.python_filtro_altos(b, radio)
                 self.img_python_resultado = cv2.merge([r,g,b])
                 self.pixmap_python_resultado = self.imgcv2pixmap(self.img_python_resultado)
                 self.ajustar_img2label(self.pixmap_python_resultado, self.label_python_img)
                 self.mostrar_datos_label(self.label_python_datos_img, self.pixmap_python_resultado)
                 self.img_python_cargada = True
-            elif self.radioButton_python_altos.isChecked():
-                print()
-            else:
-                self.mostrar_datos_label(label=self.label_python_datos_img, procesando=True, mns="selecciona una opcion xd")
-
+                
     def python_filtro_altos(self, img, radio):
         fourier = np.fft.fft2(img)
         fdesplazado = np.fft.fftshift(fourier)
