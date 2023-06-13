@@ -1,12 +1,11 @@
-from PyQt5.QtWidgets import QFileDialog, QApplication, QMainWindow, QButtonGroup
+from PyQt5.QtWidgets import QFileDialog, QApplication, QMainWindow
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5 import uic
+from PyQt5.QtCore import Qt
 import cv2
-from matplotlib.animation import ImageMagickWriter
 import numpy as np
 import time
 import os
-from PIL import Image
 from scipy.ndimage import median_filter
 
 
@@ -23,6 +22,7 @@ class VentanaPrincipal(QMainWindow):
         self.img_original_activa = False
         # 
         self.radioButton_espacio.toggled.connect(self.cambio_suavizado)
+        self.radioButton_manual.toggled.connect(self.cambio_manual)
         # 
         self.img_cargada = False
         self.img_ruido_cargada = False
@@ -39,6 +39,14 @@ class VentanaPrincipal(QMainWindow):
             self.ajustar_img2label(self.pixmap_python_resultado, self.label_python_img)
         if self.img_manual_cargada:
             self.ajustar_img2label(self.pixmap_manual_resultado, self.label_manual_img)
+    
+    def cambio_manual(self):
+        if self.radioButton_manual.isChecked():
+            self.radioButton_espacio_media.setEnabled(True)
+            self.radioButton_espacio_mediana.setEnabled(True)
+        elif self.radioButton_python.isChecked():
+            self.radioButton_espacio_media.setEnabled(False)
+            self.radioButton_espacio_mediana.setEnabled(False)
 
     def cambio_suavizado(self):
         if self.radioButton_espacio.isChecked():
@@ -133,9 +141,9 @@ class VentanaPrincipal(QMainWindow):
             ancho = self.spinBox_filtro_x.value()
             alto = self.spinBox_filtro_y.value()
             r, g, b = cv2.split(self.img_trabajo)
-            r = self.manual_filtro_media2(r, ancho, alto)
-            g = self.manual_filtro_media2(g, ancho, alto)
-            b = self.manual_filtro_media2(b, ancho, alto)
+            r = self.manual_filtro_media(r, ancho, alto)
+            g = self.manual_filtro_media(g, ancho, alto)
+            b = self.manual_filtro_media(b, ancho, alto)
         elif self.radioButton_frecuencia.isChecked():
             radio = self.spinBox_filtro_frecuencia.value()
             radio = self.verificar_radio(radio,self.img_trabajo,self.spinBox_filtro_frecuencia)
@@ -165,8 +173,10 @@ class VentanaPrincipal(QMainWindow):
                 col_inicial = j-alto if j-alto > 0 else 0
                 col_final = j + alto + 1 if j + alto + 1 < y else y 
                 filtro = canal[fila_inicial:fila_final, col_inicial:col_final]
-                media = np.median(filtro)
-                # media = np.average(filtro)
+                if self.radioButton_espacio_mediana.isChecked():
+                    media = np.median(filtro)
+                elif self.radioButton_espacio_media.isChecked():
+                    media = np.average(filtro)
                 nuevo[i, j] = media
         nuevo = nuevo.astype(np.uint8)
         return nuevo
@@ -183,7 +193,10 @@ class VentanaPrincipal(QMainWindow):
                     filtro = canal[i-i_excede:i , j-j_excede:j]
                 else:
                     filtro = canal[i:i+ancho , j:j+alto]
-                media = np.median(filtro)
+                if self.radioButton_espacio_mediana.isChecked():
+                    media = np.median(filtro)
+                elif self.radioButton_espacio_media.isChecked():
+                    media = np.average(filtro)
                 columna.append(media)
             nuevo.append(columna)
         nuevo = np.array(nuevo)
