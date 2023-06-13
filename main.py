@@ -54,9 +54,11 @@ class VentanaPrincipal(QMainWindow):
         self.img_original = cv2.cvtColor(self.img_original, cv2.COLOR_BGR2RGB)
         self.img_trabajo = self.img_original
 
-    def mostrar_datos_label(self, label=None, pixmap=None, procesando=False):
+    def mostrar_datos_label(self, label=None, pixmap=None, procesando=False, mns=None):
         if not procesando:
             label.setText(f"Ancho: {pixmap.width()}px ~ Alto: {pixmap.height()}px")
+        elif not mns == None:
+            label.setText(mns)
         else:
             label.setText("procesando imagen...")
         QApplication.processEvents()
@@ -103,6 +105,7 @@ class VentanaPrincipal(QMainWindow):
         )
 
     def aplicar_python(self):
+        self.img_python_cargada = False
         self.mostrar_datos_label(label=self.label_python_datos_img, procesando=True)
         if self.radioButton_python_espacio.isChecked():
             ancho = self.spinBox_python_espacio_ancho.value()
@@ -114,37 +117,48 @@ class VentanaPrincipal(QMainWindow):
             self.img_python_resultado = cv2.merge([r, g, b])
             self.pixmap_python_resultado = self.imgcv2pixmap(self.img_python_resultado)
             self.ajustar_img2label(self.pixmap_python_resultado, self.label_python_img)
-            self.mostrar_datos_label(
-                self.label_python_datos_img, self.pixmap_python_resultado
-            )
-            self.img_python_espacio_cargada = True
-
+            self.mostrar_datos_label(self.label_python_datos_img, self.pixmap_python_resultado)
+            self.img_python_cargada = True
         elif self.radioButton_python_frecuencia.isChecked():
-            radio = self.spinBox_python_frecuencia_radio.value()
-            r, g, b = cv2.split(self.img_trabajo)
-            r = self.python_filtro_altos(radio, r)
-            g = self.python_filtro_altos(radio, g)
-            b = self.python_filtro_altos(radio, b)
-            self.img_python_resultado = cv2.merge([r,g,b])
-            self.pixmap_python_resultado = self.imgcv2pixmap(self.img_python_resultado)
-            self.ajustar_img2label(self.pixmap_python_resultado, self.label_python_img)
+            if self.radioButton_python_altos.isChecked():
+                radio = self.spinBox_python_frecuencia_radio.value()
+                radio = self.verificar_radio(radio,self.img_trabajo,self.spinBox_python_frecuencia_radio)
+                r, g, b = cv2.split(self.img_trabajo)
+                r = self.python_filtro_altos(r, radio)
+                g = self.python_filtro_altos(g, radio)
+                b = self.python_filtro_altos(b, radio)
+                self.img_python_resultado = cv2.merge([r,g,b])
+                self.pixmap_python_resultado = self.imgcv2pixmap(self.img_python_resultado)
+                self.ajustar_img2label(self.pixmap_python_resultado, self.label_python_img)
+                self.mostrar_datos_label(self.label_python_datos_img, self.pixmap_python_resultado)
+                self.img_python_cargada = True
+            elif self.radioButton_python_altos.isChecked():
+                print()
+            else:
+                self.mostrar_datos_label(label=self.label_python_datos_img, procesando=True, mns="selecciona una opcion xd")
 
-    def python_filtro_altos(self, radio, img):
-        gray = img 
-        f = np.fft.fft2(gray)
-        fshift = np.fft.fftshift(f)
-        rows, cols = gray.shape
-        crow, ccol = int(rows / 2), int(cols / 2)
-        mask = np.ones((rows, cols), np.uint8)
-        mask[crow - radio : crow + radio, ccol - radio : ccol + radio] = 0
-        fshift_filtered = fshift * mask
-        f_ishift = np.fft.ifftshift(fshift_filtered)
-        image_filtered = np.abs(np.fft.ifft2(f_ishift))
-        resultado = cv2.normalize(
-            image_filtered, None, 0, 255, cv2.NORM_MINMAX, dtype=cv2.CV_8U
-        )
-        return resultado
-
+    def python_filtro_altos(self, img, radio):
+        fourier = np.fft.fft2(img)
+        fdesplazado = np.fft.fftshift(fourier)
+        filas, columnas = img.shape
+        centro_filas, centro_columnas = filas // 2, columnas // 2
+        mascara = np.zeros((filas, columnas), np.uint8)
+        mascara[centro_filas - radio:centro_filas + radio, centro_columnas - radio:centro_columnas + radio] = 1
+        filtrado = fdesplazado * mascara
+        inversa_desplazado = np.fft.ifftshift(filtrado)
+        img = np.abs(np.fft.ifft2(inversa_desplazado))
+        return img.astype(np.uint8)
+    
+    def verificar_radio(self, radio, img, objeto):
+        x, y, _ = img.shape
+        if x < y:
+            x = y
+        if radio*2 > x:
+            x = x/2
+            objeto.setValue(x)
+            return x
+        return radio
+    
     def descargar_img(self, img, nombre):
         directorio = QFileDialog.getExistingDirectory(ventana, "Seleccionar directorio")
         if directorio:

@@ -217,7 +217,7 @@
                  <rect>
                   <x>10</x>
                   <y>10</y>
-                  <width>121</width>
+                  <width>161</width>
                   <height>20</height>
                  </rect>
                 </property>
@@ -230,7 +230,7 @@
                  <rect>
                   <x>10</x>
                   <y>40</y>
-                  <width>141</width>
+                  <width>191</width>
                   <height>20</height>
                  </rect>
                 </property>
@@ -471,7 +471,7 @@
                    <item row="2" column="1">
                     <widget class="QFrame" name="frame_18">
                      <property name="frameShape">
-                      <enum>QFrame::StyledPanel</enum>
+                      <enum>QFrame::NoFrame</enum>
                      </property>
                      <property name="frameShadow">
                       <enum>QFrame::Raised</enum>
@@ -514,6 +514,9 @@
                        <widget class="QSpinBox" name="spinBox_python_frecuencia_radio">
                         <property name="minimum">
                          <number>1</number>
+                        </property>
+                        <property name="maximum">
+                         <number>1000000</number>
                         </property>
                        </widget>
                       </item>
