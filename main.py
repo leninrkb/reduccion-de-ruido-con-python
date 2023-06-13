@@ -151,6 +151,8 @@ class VentanaPrincipal(QMainWindow):
                 self.ajustar_img2label(self.pixmap_python_resultado, self.label_python_img)
                 self.mostrar_datos_label(self.label_python_datos_img, self.pixmap_python_resultado)
                 self.img_python_cargada = True
+                self.pushButton_python_descargar.setEnabled(True)
+
 
     def python_filtro_altos(self, img, radio):
         fourier = np.fft.fft2(img)
