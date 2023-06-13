@@ -122,9 +122,9 @@ class VentanaPrincipal(QMainWindow):
             ancho = self.spinBox_filtro_x.value()
             alto = self.spinBox_filtro_y.value()
             r, g, b = cv2.split(self.img_trabajo)
-            r = self.manual_filtro_media2(r, ancho, alto)
-            g = self.manual_filtro_media2(g, ancho, alto)
-            b = self.manual_filtro_media2(b, ancho, alto)
+            r = self.manual_filtro_media(r, ancho, alto)
+            g = self.manual_filtro_media(g, ancho, alto)
+            b = self.manual_filtro_media(b, ancho, alto)
         elif self.radioButton_frecuencia.isChecked():
             radio = self.spinBox_filtro_frecuencia.value()
             radio = self.verificar_radio(radio,self.img_trabajo,self.spinBox_filtro_frecuencia)
@@ -168,10 +168,10 @@ class VentanaPrincipal(QMainWindow):
             for j in range(0,y):
                 if i+ancho > x or j+alto > y:
                     i_excede = abs(i+ancho-x)
-                    i_falta = ancho - i_excede
+                    # i_falta = ancho - i_excede
                     j_excede = abs(j+alto-y)
-                    j_falta = alto - j_excede
-                    filtro = canal[i-i_excede:i+i_falta , j-j_excede:j+j_falta]
+                    # j_falta = alto - j_excede
+                    filtro = canal[i:i+i_excede , j:j+j_excede]
                 else:
                     filtro = canal[i:i+ancho , j:j+alto]
                 media = np.median(filtro)
