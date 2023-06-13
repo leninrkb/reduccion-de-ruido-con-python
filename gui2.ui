@@ -73,21 +73,21 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_5">
+              <widget class="QLabel" name="label_img_original_datos">
                <property name="text">
                 <string>info</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_6">
+              <widget class="QLabel" name="label_img_original">
                <property name="text">
                 <string>img</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton">
+              <widget class="QPushButton" name="pushButton_cargar_img">
                <property name="text">
                 <string>Descgargar</string>
                </property>
@@ -122,7 +122,7 @@
               </widget>
              </item>
              <item row="0" column="1">
-              <widget class="QSpinBox" name="spinBox">
+              <widget class="QSpinBox" name="spinBox_media">
                <property name="minimum">
                 <number>5</number>
                </property>
@@ -142,7 +142,7 @@
               </widget>
              </item>
              <item row="1" column="1">
-              <widget class="QSpinBox" name="spinBox_2">
+              <widget class="QSpinBox" name="spinBox_desviacion">
                <property name="minimum">
                 <number>5</number>
                </property>
@@ -155,7 +155,7 @@
               </widget>
              </item>
              <item row="2" column="0" colspan="2">
-              <widget class="QPushButton" name="pushButton_2">
+              <widget class="QPushButton" name="pushButton_aplicar_ruido">
                <property name="text">
                 <string>Aplicar ruido</string>
                </property>
@@ -189,21 +189,21 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QLabel" name="label_9">
+              <widget class="QLabel" name="label_datos_img_ruido">
                <property name="text">
                 <string>info</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_10">
+              <widget class="QLabel" name="label_img_ruido">
                <property name="text">
                 <string>img</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_3">
+              <widget class="QPushButton" name="pushButton_descargar_img_ruido">
                <property name="text">
                 <string>Descargar</string>
                </property>
@@ -246,14 +246,14 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QRadioButton" name="radioButton_2">
+                 <widget class="QRadioButton" name="radioButton_manual">
                   <property name="text">
                    <string>Manual</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QRadioButton" name="radioButton">
+                 <widget class="QRadioButton" name="radioButton_python">
                   <property name="text">
                    <string>Python</string>
                   </property>
@@ -287,14 +287,14 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QRadioButton" name="radioButton_3">
+                 <widget class="QRadioButton" name="radioButton_espacio">
                   <property name="text">
                    <string>Espacio</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QRadioButton" name="radioButton_4">
+                 <widget class="QRadioButton" name="radioButton_frecuencia">
                   <property name="text">
                    <string>Frecuencia</string>
                   </property>
@@ -327,7 +327,7 @@
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QSpinBox" name="spinBox_3">
+                 <widget class="QSpinBox" name="spinBox_filtro_x">
                   <property name="minimum">
                    <number>1</number>
                   </property>
@@ -344,7 +344,7 @@
                  </widget>
                 </item>
                 <item row="1" column="3">
-                 <widget class="QSpinBox" name="spinBox_4">
+                 <widget class="QSpinBox" name="spinBox_filtro_y">
                   <property name="minimum">
                    <number>1</number>
                   </property>
@@ -366,14 +366,14 @@
                </property>
                <layout class="QFormLayout" name="formLayout_2">
                 <item row="0" column="0">
-                 <widget class="QRadioButton" name="radioButton_5">
+                 <widget class="QRadioButton" name="radioButton_altos">
                   <property name="text">
                    <string>Altos</string>
                   </property>
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="QRadioButton" name="radioButton_6">
+                 <widget class="QRadioButton" name="radioButton_bajos">
                   <property name="text">
                    <string>Bajos</string>
                   </property>
@@ -382,12 +382,12 @@
                 <item row="1" column="0">
                  <widget class="QLabel" name="label_14">
                   <property name="text">
-                   <string>Radio</string>
+                   <string>Filtro</string>
                   </property>
                  </widget>
                 </item>
                 <item row="1" column="1">
-                 <widget class="QSpinBox" name="spinBox_5">
+                 <widget class="QSpinBox" name="spinBox_filtro_frecuencia">
                   <property name="minimum">
                    <number>1</number>
                   </property>
@@ -424,14 +424,14 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1">
              <item>
-              <widget class="QLabel" name="label">
+              <widget class="QLabel" name="label_python_datos_img">
                <property name="text">
                 <string>info</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_4">
+              <widget class="QLabel" name="label_python_img">
                <property name="text">
                 <string>img</string>
                </property>
@@ -450,14 +450,14 @@
             </property>
             <layout class="QHBoxLayout" name="horizontalLayout_4">
              <item>
-              <widget class="QPushButton" name="pushButton_4">
+              <widget class="QPushButton" name="pushButton_aplicar_filtro">
                <property name="text">
                 <string>Aplicar filtro</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="pushButton_5">
+              <widget class="QPushButton" name="pushButton_descargar_resultado">
                <property name="text">
                 <string>Descargar</string>
                </property>
@@ -476,14 +476,14 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,1">
              <item>
-              <widget class="QLabel" name="label_2">
+              <widget class="QLabel" name="label_manual_datos_img">
                <property name="text">
                 <string>info</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QLabel" name="label_3">
+              <widget class="QLabel" name="label_manual_img">
                <property name="text">
                 <string>img</string>
                </property>

@@ -82,8 +82,8 @@ class VentanaPrincipal(QMainWindow):
 
     def aplicar_ruido(self):
         ruido = np.zeros(self.img_original.shape, dtype=np.uint8)
-        media = self.doubleSpinBox_media.value()
-        desviacion = self.doubleSpinBox_desviacion.value()
+        media = self.spinBox_media.value()
+        desviacion = self.spinBox_desviacion.value()
         cv2.randn(ruido, media, desviacion)
         self.img_ruido = cv2.add(self.img_original, ruido)
         self.mostrar_img_ruido()
