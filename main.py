@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QFileDialog, QApplication, QMainWindow
+from PyQt5.QtWidgets import QFileDialog, QApplication, QMainWindow, QButtonGroup
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5 import uic
 import cv2
@@ -138,7 +138,7 @@ class VentanaPrincipal(QMainWindow):
                 self.ajustar_img2label(self.pixmap_python_resultado, self.label_python_img)
                 self.mostrar_datos_label(self.label_python_datos_img, self.pixmap_python_resultado)
                 self.img_python_cargada = True
-                
+
     def python_filtro_altos(self, img, radio):
         fourier = np.fft.fft2(img)
         fdesplazado = np.fft.fftshift(fourier)
@@ -156,7 +156,7 @@ class VentanaPrincipal(QMainWindow):
         if x < y:
             x = y
         if radio*2 > x:
-            x = x/2
+            x = int(x/2)
             objeto.setValue(x)
             return x
         return radio
