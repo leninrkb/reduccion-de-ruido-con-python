@@ -145,23 +145,18 @@ class VentanaPrincipal(QMainWindow):
         self.pushButton_descargar_resultado.setEnabled(True)
 
     def manual_filtro_media2(self, canal, ancho, alto):
-        nuevo = []
-        x, y = canal.shape
-        for i in range(0,x):
-            columna = []
-            for j in range(0,y):
-                if i+ancho > x or j+alto > y:
-                    i_excede = abs(i+ancho-x)
-                    i_falta = ancho - i_excede
-                    j_excede = abs(j+alto-y)
-                    j_falta = alto - j_excede
-                    filtro = canal[i-i_excede:i+i_falta , j-j_excede:j+j_falta]
-                else:
-                    filtro = canal[i:i+ancho , j:j+alto]
+        nuevo = np.copy(canal)  
+        x,y = nuevo.shape
+        for i in range(canal.shape[0]):
+            for j in range(canal.shape[1]):
+                fila_inicial = i-ancho if i-ancho > 0 else 0
+                fila_final = i + ancho + 1 if i + ancho + 1 < x else x 
+                col_inicial = j-alto if j-alto > 0 else 0
+                col_final = j + alto + 1 if j + alto + 1 < y else y 
+                filtro = canal[fila_inicial:fila_final, col_inicial:col_final]
                 media = np.median(filtro)
-                columna.append(media)
-            nuevo.append(columna)
-        nuevo = np.array(nuevo)
+                # media = np.average(filtro)
+                nuevo[i, j] = media
         nuevo = nuevo.astype(np.uint8)
         return nuevo
     
