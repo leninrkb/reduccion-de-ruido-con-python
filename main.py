@@ -1,7 +1,6 @@
 from PyQt5.QtWidgets import QFileDialog, QApplication, QMainWindow
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5 import uic
-from PyQt5.QtCore import Qt
 import cv2
 import numpy as np
 import time
@@ -141,9 +140,9 @@ class VentanaPrincipal(QMainWindow):
             ancho = self.spinBox_filtro_x.value()
             alto = self.spinBox_filtro_y.value()
             r, g, b = cv2.split(self.img_trabajo)
-            r = self.manual_filtro_media(r, ancho, alto)
-            g = self.manual_filtro_media(g, ancho, alto)
-            b = self.manual_filtro_media(b, ancho, alto)
+            r = self.manual_filtro_media2(r, ancho, alto)
+            g = self.manual_filtro_media2(g, ancho, alto)
+            b = self.manual_filtro_media2(b, ancho, alto)
         elif self.radioButton_frecuencia.isChecked():
             radio = self.spinBox_filtro_frecuencia.value()
             radio = self.verificar_radio(radio,self.img_trabajo,self.spinBox_filtro_frecuencia)
@@ -166,12 +165,14 @@ class VentanaPrincipal(QMainWindow):
     def manual_filtro_media2(self, canal, ancho, alto):
         nuevo = np.copy(canal)  
         x,y = nuevo.shape
-        for i in range(canal.shape[0]):
-            for j in range(canal.shape[1]):
+        for i in range(x):
+            for j in range(y):
                 fila_inicial = i-ancho if i-ancho > 0 else 0
                 fila_final = i + ancho + 1 if i + ancho + 1 < x else x 
+
                 col_inicial = j-alto if j-alto > 0 else 0
                 col_final = j + alto + 1 if j + alto + 1 < y else y 
+                
                 filtro = canal[fila_inicial:fila_final, col_inicial:col_final]
                 if self.radioButton_espacio_mediana.isChecked():
                     media = np.median(filtro)
